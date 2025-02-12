@@ -14,7 +14,7 @@
 
     <nav>
         <h1>The Term Storage:</h1>
-        <form action="/new" method="post">
+        <form action="/main" method="post">
             <input type="text" id="term" name="term" placeholder="Introduce a new word:">
             <input type="submit" value="Submit">
         </form>
@@ -22,7 +22,8 @@
 
     <div class="content">
         <% list.forEach((item) => { %>
-            <%= item.term %>
+           <li> <%= item.term %> : <%= item.definition %></li>
+           <li>  </li>
         <% }); %>
     </div>
 

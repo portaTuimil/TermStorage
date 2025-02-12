@@ -56,5 +56,12 @@ input{
 }
 
 .content{
+    width: 100%;
+    color: var(--dark-grey);
+    font-size: 1.1rem;;
+    padding: 30px 10%;
+}
+
+li{
     color: var(--dark-grey);
 }

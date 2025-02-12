@@ -11,9 +11,18 @@ mongoose.set('strictQuery',false);
 mongoose.connect(URL);
 const termSchema = new mongoose.Schema({
   term: String,
-  preference: Number,
+  definition: String,
 });
-const Term = mongoose.model('Term', termSchema)
+const Term = mongoose.model('Term', termSchema);
+
+async function retriveDefinition(name){
+    let definition = await (await fetch("https://rae-api.com/api/words/" + name)).json()
+    let defList = [];
+    definition.data.meanings[0].senses.forEach((element)=>{
+        defList.push(element.raw)
+    });
+    console.log(defList);
+};
 
 app.use(express.json()); 
 app.use(express.urlencoded({extended: false}));
@@ -30,19 +39,21 @@ app.get("/main", (req, res) =>{
     })
 });
 
-app.post("/new", (req, res) =>{
+app.post("/main", (req, res) =>{
     const newTerm = new Term({
         term: req.body.term,
-        preference: 1,
-      })
+        definition: req.body.definition,
+    });
       
     newTerm.save().then(result => {
-        console.log('Note saved :' + req.body.term)
-    })
-    
+        console.log('Note saved: ' + req.body.term)
+    });
+
+    retriveDefinition(req.body.term);
+
     Term.find().then(result => {
         res.render('main.ejs', {list: result});
-    })
+    });
 });
 
 app.listen(PORT);
