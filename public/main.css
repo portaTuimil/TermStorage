@@ -30,8 +30,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    list-style-type: none;
-    text-decoration: none;
+    list-style: none;
     scrollbar-width: auto;
     scrollbar-color: var(--light-grey) var(--dark-grey);
     color: white;
@@ -63,5 +62,10 @@ input{
 }
 
 li{
+    margin-bottom: 20px;
     color: var(--dark-grey);
+}
+
+label{
+    color: #0b131e;
 }

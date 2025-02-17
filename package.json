@@ -13,8 +13,10 @@
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
-    "mongoose": "^8.10.0",
     "nodemon": "^3.1.9",
     "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "mongoose": "^8.10.1"
   }
 }
