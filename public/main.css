@@ -69,3 +69,8 @@ li{
 label{
     color: #0b131e;
 }
+
+.defForm{
+    width: 80%;
+    margin: 10px 10%;
+}

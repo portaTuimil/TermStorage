@@ -7,7 +7,7 @@ async function retriveDefinition(name){
     let definition = await (await fetch("https://rae-api.com/api/words/" + name)).json()
     let defList = [];
     if (definition.error){
-        return []
+        location.reload();
     } else{
         definition.data.meanings[0].senses.forEach((element)=>{
             defList.push(element.raw)
@@ -32,7 +32,7 @@ wordForm.addEventListener("submit", (e)=>{
             input.setAttribute("type", "checkbox");
             input.setAttribute("name", element[0]);
             label.setAttribute("for", element[0]);
-            label.textContent = element;
+            label.innerHTML = element + "<br>";
             
             defForm.appendChild(input);
             defForm.appendChild(label);            
