@@ -61,20 +61,31 @@ app.post("/main", (req, res) =>{
         })
         definitions =  definitions.join("mmmm");
 
-        const newTerm = new Term({
-            term: String(reqList.slice(-1)).charAt(0).toUpperCase() + String(reqList.slice(-1)).slice(1),
-            definition: String(definitions),
-        });
-        
-        newTerm.save().then(result => {
-            console.log('Note saved: ' + reqList.slice(-1))
-        });
-        
-        setTimeout(()=>{
-            Term.find().then(retrievedDocuments => {
-                res.render('main.ejs', {list: retrievedDocuments});
-            }); 
-        }, 200);
+        Term.find().then(retrievedDocuments => {
+            let termList = retrievedDocuments.map(element => element.term)
+            resultBool = !(termList.includes(String(reqList.slice(-1)).charAt(0).toUpperCase() + String(reqList.slice(-1)).slice(1)))
+
+            if (resultBool){
+                const newTerm = new Term({
+                    term: String(reqList.slice(-1)).charAt(0).toUpperCase() + String(reqList.slice(-1)).slice(1),
+                    definition: String(definitions),
+                });
+            
+                newTerm.save().then(result => {
+                    console.log('Note saved: ' + reqList.slice(-1))
+                });
+            
+                setTimeout(()=>{
+                    Term.find().then(retrievedDocuments => {
+                        res.render('main.ejs', {list: retrievedDocuments});
+                    }); 
+                }, 200);
+                }  else{
+                Term.find().then(retrievedDocuments => {
+                    res.render('main.ejs', {list: retrievedDocuments});
+                }); 
+            }  
+         });      
     })();
 });
 
