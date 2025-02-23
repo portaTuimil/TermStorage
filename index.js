@@ -44,7 +44,7 @@ app.get("/", (req, res) =>{
 });
 
 app.get("/main", (req, res) =>{
-    Term.find().then(retrievedDocuments => {
+    Term.find().sort({term: 1}).then(retrievedDocuments => {
         res.render('main.ejs', {list: retrievedDocuments});
     });
 });
@@ -61,7 +61,7 @@ app.post("/main", (req, res) =>{
         })
         definitions =  definitions.join("mmmm");
 
-        Term.find().then(retrievedDocuments => {
+        Term.find().sort({term: 1}).then(retrievedDocuments => {
             let termList = retrievedDocuments.map(element => element.term)
             resultBool = !(termList.includes(String(reqList.slice(-1)).charAt(0).toUpperCase() + String(reqList.slice(-1)).slice(1)))
 
@@ -76,12 +76,12 @@ app.post("/main", (req, res) =>{
                 });
             
                 setTimeout(()=>{
-                    Term.find().then(retrievedDocuments => {
+                    Term.find().sort({term: 1}).then(retrievedDocuments => {
                         res.render('main.ejs', {list: retrievedDocuments});
                     }); 
                 }, 200);
                 }  else{
-                Term.find().then(retrievedDocuments => {
+                Term.find().sort({term: 1}).then(retrievedDocuments => {
                     res.render('main.ejs', {list: retrievedDocuments});
                 }); 
             }  
