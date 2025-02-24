@@ -17,27 +17,29 @@ async function retriveDefinition(name){
 };
 
 wordForm.addEventListener("submit", (e)=>{
-    e.preventDefault()
-    let defList = [];
-    (async () => {
-        defList = await retriveDefinition(term.value);
-        let hidden = document.createElement("input");
-        let submit = document.createElement("input");
-        submit.setAttribute("type", "submit")
-        hidden.setAttribute("type", "hidden");
-        hidden.setAttribute("name", term.value);
-        defList.forEach((element) => {
-            let input = document.createElement("input");
-            let label = document.createElement("label");
-            input.setAttribute("type", "checkbox");
-            input.setAttribute("name", element[0]);
-            label.setAttribute("for", element[0]);
-            label.innerHTML = element + "<br>";
-            
-            defForm.appendChild(input);
-            defForm.appendChild(label);            
-        });
-        defForm.appendChild(submit);
-        defForm.prepend(hidden); 
-    })();
+    if (term.value.slice(0,2)!=="--"){
+        e.preventDefault()
+        let defList = [];
+        (async () => {
+            defList = await retriveDefinition(term.value);
+            let hidden = document.createElement("input");
+            let submit = document.createElement("input");
+            submit.setAttribute("type", "submit")
+            hidden.setAttribute("type", "hidden");
+            hidden.setAttribute("name", term.value);
+            defList.forEach((element) => {
+                let input = document.createElement("input");
+                let label = document.createElement("label");
+                input.setAttribute("type", "checkbox");
+                input.setAttribute("name", element[0]);
+                label.setAttribute("for", element[0]);
+                label.innerHTML = element + "<br>";
+                
+                defForm.appendChild(input);
+                defForm.appendChild(label);            
+            });
+            defForm.appendChild(submit);
+            defForm.prepend(hidden); 
+        })();    
+    }
 });

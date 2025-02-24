@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const express = require("express")
 const path = require('path')
+const { read } = require('fs')
 const app = express()
 require('dotenv').config()      //Dotenv
 
@@ -36,6 +37,12 @@ async function retriveDefinition(name){
     }
 };
 
+function serveRender(res){
+    Term.find().sort({term: 1}).then(retrievedDocuments => {
+        res.render('main.ejs', {list: retrievedDocuments});
+    }); 
+}
+
 
 
 //Routes
@@ -44,49 +51,53 @@ app.get("/", (req, res) =>{
 });
 
 app.get("/main", (req, res) =>{
-    Term.find().sort({term: 1}).then(retrievedDocuments => {
-        res.render('main.ejs', {list: retrievedDocuments});
-    });
+    serveRender(res);
 });
 
 app.post("/main", (req, res) =>{
-    let reqList = Object.keys(req.body);
-    let defList =[];
-    let definitions = [];
-    (async () => {
-        defList = await retriveDefinition(reqList.slice(-1));
-        listIndexes = reqList.slice(0, -1);
-        listIndexes.forEach((e) => {
-            definitions.push(defList[parseInt(e)-1])
-        })
-        definitions =  definitions.join("mmmm");
+    if (Object.values(req.body)[0].slice(0,2) == "--"){
+        (async ()=>{
+            x = Object.values(req.body)[0].slice(2)
+            x = String(x).charAt(0).toUpperCase() + String(x).slice(1)
 
-        Term.find().sort({term: 1}).then(retrievedDocuments => {
-            let termList = retrievedDocuments.map(element => element.term)
-            resultBool = !(termList.includes(String(reqList.slice(-1)).charAt(0).toUpperCase() + String(reqList.slice(-1)).slice(1)))
+            await Term.deleteOne({term: x}).then((result) =>{
+                serveRender(res);
+            })
+        })();
+    } else{
+        let reqList = Object.keys(req.body);
+        console.log(req.body)
+        let termName = String(reqList.slice(-1)).charAt(0).toUpperCase() + String(reqList.slice(-1)).slice(1);
+        let defList =[];
+        let definitions = [];
+        (async () => {
+            defList = await retriveDefinition(termName);
+            listIndexes = reqList.slice(0, -1);
+            listIndexes.forEach((e) => {
+                definitions.push(defList[parseInt(e)-1])
+            })
+            definitions =  definitions.join("mmmm"); //MongoDB erases especial characters to prevent query injections.
 
-            if (resultBool){
-                const newTerm = new Term({
-                    term: String(reqList.slice(-1)).charAt(0).toUpperCase() + String(reqList.slice(-1)).slice(1),
-                    definition: String(definitions),
-                });
-            
-                newTerm.save().then(result => {
-                    console.log('Note saved: ' + reqList.slice(-1))
-                });
-            
-                setTimeout(()=>{
-                    Term.find().sort({term: 1}).then(retrievedDocuments => {
-                        res.render('main.ejs', {list: retrievedDocuments});
-                    }); 
-                }, 200);
+            Term.find().sort({term: 1}).then(retrievedDocuments => {
+                let termList = retrievedDocuments.map(element => element.term)
+                resultBool = !(termList.includes(termName))
+
+                if (resultBool){
+                    const newTerm = new Term({
+                        term: termName,
+                        definition: String(definitions),
+                    });
+                
+                    newTerm.save().then(result => {
+                        console.log('Note saved: ' + reqList.slice(-1))
+                        serveRender(res);
+                    });
                 }  else{
-                Term.find().sort({term: 1}).then(retrievedDocuments => {
-                    res.render('main.ejs', {list: retrievedDocuments});
-                }); 
-            }  
-         });      
-    })();
+                    serveRender(res);
+                }  
+            });      
+        })();    
+    }
 });
 
 app.listen(PORT);
